@@ -1,7 +1,7 @@
 import mongoose from "mongoose";
 
 //created message SCHEMA and thread schema in one file intead of separate file because  message schema does not have much role apart from being the part of thread
-const megSchema = new mongoose.Schema({
+const msgSchema = new mongoose.Schema({
     role:{
         type:String,
         enum: ["user", "assistant"],
@@ -13,12 +13,13 @@ const megSchema = new mongoose.Schema({
     },
     timestamp:{
         type:Date,
+        // required:true,
         default: Date.now
     }
 })
 
 const ThreadSchema = new mongoose.Schema({
-    threadID:{
+    threadId:{
         type:String,
         required:true,
         unique: true
@@ -28,9 +29,9 @@ const ThreadSchema = new mongoose.Schema({
         type:String,
         default:"new chat"
     },
-    messages: [megSchema],
+    messages: [msgSchema],
     updatedAt:{
-        type:Data,
+        type:Date,
         default:Date.now
     },
     createdAt:{

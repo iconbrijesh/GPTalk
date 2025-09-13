@@ -2,11 +2,14 @@ import express from "express";
 import 'dotenv/config'; //It automatically loads your .env file and populates process.env with the variables inside
 import cors from "cors";
 import mongoose from "mongoose";
+import chatRoutes from './routes/chat.js';
 
 const app = express();
 
 app.use(express.json());
 app.use(cors()); 
+
+app.use("/api", chatRoutes);
 
 app.listen(8080,()=>{
     console.log("Port 8080 is listening!");
