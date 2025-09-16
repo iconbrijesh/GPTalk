@@ -12,7 +12,7 @@ function Sidebar() {
         <aside className={`sidebar ${isOpen ? 'open' : 'closed'}`}>
             <div className="sidebar-header" >
                 <button className="toggle-btn">
-                    <img src="./src/assets/blacklogo.png" alt="GPTlogo" className="logo"onClick={toggleSidebar} />
+                    <img src="./src/assets/blacklogo.png" alt="GPTlogo" className="logo" onClick={toggleSidebar} />
                     {isOpen && (
                         <span className="menu-icon" onClick={toggleSidebar}>
                             <i className="fa-solid fa-grip-lines"></i>
@@ -21,8 +21,30 @@ function Sidebar() {
                 </button>
             </div>
 
+            <div className="newChat">
+                <span><i className="fa-solid fa-pen-to-square"></i>
+                { isOpen? "New chat": ""}
+                </span>
 
-            
+                <span><i className="fa-solid fa-magnifying-glass"></i>
+                { isOpen? "Search chat": ""}
+                </span>
+            </div>
+             
+
+            <div className="history">
+                <ul>{ isOpen?  <li>hinn1</li> : ""}
+                   
+                </ul>
+            </div>
+
+            <div className="sign">
+                <p>-By Brijesh &hearts;</p>
+
+            </div>
+
+
+
         </aside>
     );
 }
