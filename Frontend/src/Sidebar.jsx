@@ -12,7 +12,7 @@ function Sidebar() {
         <aside className={`sidebar ${isOpen ? 'open' : 'closed'}`}>
             <div className="sidebar-header" >
                 <button className="toggle-btn">
-                    <img src="./src/assets/blacklogo.png" alt="GPTlogo" className="logo" onClick={toggleSidebar} />
+                    <img src="./src/assets/GPTalk.jpg" alt="GPTlogo" className="logo" onClick={toggleSidebar} />
                     {isOpen && (
                         <span className="menu-icon" onClick={toggleSidebar}>
                             <i className="fa-solid fa-grip-lines"></i>
