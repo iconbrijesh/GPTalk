@@ -70,9 +70,9 @@ router.post("/chat", async (req, res) => {
 
     try {
         let thread = await Thread.findOne({ threadId });
-        if (!threadId) {
+        if (!thread) {
             //creating new thread
-            const thread = new Thread({
+            thread = new Thread({
                 threadId,
                 title: message,
                 messages: [{ role: "user", content: message }],
@@ -99,8 +99,8 @@ router.post("/chat", async (req, res) => {
 
 
 
-router.post('/test', async(req, res) => {
-    try{
+router.post('/test', async (req, res) => {
+    try {
         const thread = new Thread({
             threadId: "a4",
             title: "griffith is machivalli"
@@ -108,9 +108,9 @@ router.post('/test', async(req, res) => {
         const response = await thread.save();
         res.send(response);
 
-    }catch(err){
+    } catch (err) {
         console.log(err);
-        res.status(500).json( {error:"failed to save in db"});
+        res.status(500).json({ error: "failed to save in db" });
     }
 
 
