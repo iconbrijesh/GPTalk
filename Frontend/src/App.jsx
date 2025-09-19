@@ -4,6 +4,7 @@ import ChatWindow from "./ChatWindow";
 import { MyContext } from "./MyContext.jsx";
 import { useState } from 'react';
 import { v4 as uuidv4 } from 'uuid';
+ 
 
 
 
@@ -14,6 +15,10 @@ function App() {
   const [prevChats, setPrevChats] = useState([]); //stores all chats of curr threads
   const [newChat, setNewChat] = useState(true);
   const [allThreads, setAllThreads] = useState([]);
+  const [isOpen, setIsOpen] = useState({
+    sidebar: false,
+    profile:false,
+  });
   
   const providerValues = {
     prompt, setPrompt,
@@ -21,7 +26,8 @@ function App() {
     currThreadId, setCurrThreadId,
     prevChats, setPrevChats,
     newChat, setNewChat,
-    allThreads, setAllThreads
+    allThreads, setAllThreads,
+    isOpen, setIsOpen
 
   };
 

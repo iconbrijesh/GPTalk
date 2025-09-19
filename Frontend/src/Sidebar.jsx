@@ -1,19 +1,91 @@
 import './Sidebar.css';
-import { useState } from 'react';
+import { useState, useEffect, useContext } from 'react';
+import { MyContext } from "./MyContext.jsx";
+import { v1 as uuidv1 } from 'uuid';
 
 function Sidebar() {
-    const [isOpen, setIsOpen] = useState(true);
+   
+    const { allThreads, setAllThreads, currThreadId, setNewChat, setReply, setPrompt, setPrevChats, setCurrThreadId,isOpen, setIsOpen } = useContext(MyContext);
 
-    const toggleSidebar = () => {
-        setIsOpen(!isOpen);
+
+   const toggleSidebar = () => {
+  setIsOpen(prev => ({ ...prev, sidebar: !prev.sidebar }));
+};
+
+
+    const getAllThreads = async () => {
+        try {
+            let response = await fetch("http://localhost:8080/api/thread");
+            const res = await response.json();
+
+
+            const filteredData = res.map(thread => ({
+                threadId: thread.threadId,
+                title: thread.title
+            }));
+            // console.log(filteredData);
+            setAllThreads(filteredData);
+
+        } catch (err) {
+            console.log("failed to fetch threads");
+        }
+
+
+    }
+
+    useEffect(() => {
+        getAllThreads();
+    }, [])
+
+    const createNewChat = () => {
+        setNewChat(true);
+        setReply(null);
+        setPrompt("");
+        setPrevChats([]);
+        setCurrThreadId(uuidv1());
+
+    }
+
+    const changeThread = async (newThreadId) => {
+        setCurrThreadId(newThreadId);
+        try {
+            const response = await fetch(`http://localhost:8080/api/thread/${newThreadId}`);
+            const res = await response.json();
+            console.log(res);
+            setPrevChats(res);
+            setNewChat(false);
+            setReply(null);
+
+        } catch (err) {
+            console.log("Error fetching thread:", err);
+        }
     };
 
+    const deleteThread = async (newthreadId) => {
+        try {
+            const response = await fetch(`http://localhost:8080/api/thread/${newthreadId}`, { method: "DELETE" });
+            const res = await response.json();
+            console.log(res);
+
+            //up-dated threads re-render
+            setAllThreads(prev =>prev.filter(thread=> thread.threadId !== newthreadId))
+             
+             if(newthreadId === currThreadId) {
+                createNewChat();
+            }
+
+        } catch (err) {
+            console.log(err);
+        }
+    }
+
+
     return (
-        <aside className={`sidebar ${isOpen ? 'open' : 'closed'}`}>
+        <aside className={`sidebar ${isOpen.sidebar ? 'open' : 'closed'}`}>
             <div className="sidebar-header" >
                 <button className="toggle-btn">
                     <img src="./src/assets/GPTalk.jpg" alt="GPTlogo" className="logo" onClick={toggleSidebar} />
-                    {isOpen && (
+                    {isOpen.sidebar && (
                         <span className="menu-icon" onClick={toggleSidebar}>
                             <i className="fa-solid fa-grip-lines"></i>
                         </span>
@@ -22,19 +94,41 @@ function Sidebar() {
             </div>
 
             <div className="newChat">
-                <span><i className="fa-solid fa-pen-to-square"></i>
-                { isOpen? "New chat": ""}
-                </span>
+                <button className="chat-btn" onClick={createNewChat}>
+                    <span>
+                        <i className="fa-solid fa-pen-to-square"></i>
+                        {isOpen.sidebar ? "New chat" : ""}
+                    </span>
+                </button>
 
-                <span><i className="fa-solid fa-magnifying-glass"></i>
-                { isOpen? "Search chat": ""}
-                </span>
+                <button className="chat-btn">
+                    <span>
+                        <i className="fa-solid fa-magnifying-glass"></i>
+                        {isOpen.sidebar ? "Search chat" : ""}
+                    </span>
+                </button>
             </div>
-             
+
+
 
             <div className="history">
-                <ul>{ isOpen?  <li>hinn1</li> : ""}
-                   
+                <ul>{isOpen.sidebar ? allThreads?.map((thread, idx) => (
+                    <li key={idx}
+                        onClick={(e) => changeThread(thread.threadId)}
+                        assName={thread.threadId === currThreadId ? "highlighted": " "}
+                        >
+                    {thread.title}
+                        <span><i className="fa-solid fa-trash-can"
+                            onClick={(e) => {
+                                e.stopPropagation(); // stops event bubbling
+                                deleteThread(thread.threadId);
+                            }}
+
+
+                        ></i></span>
+                    </li>
+                )) : ""}
+
                 </ul>
             </div>
 

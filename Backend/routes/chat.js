@@ -21,10 +21,10 @@ router.get("/thread", async (req, res) => {
 })
 
 //get one thread by threadID
-router.get("/thread/:threadId", async (res, req) => {
+router.get("/thread/:threadId", async (req, res) => {
     try {
         const { threadId } = req.params;
-        const thread = await Thread.findOne(threadId);
+        const thread = await Thread.findOne({threadId:threadId});
         if (!thread) {
             res.status(404).json({ error: "Invalid thread id" });
         }
@@ -41,11 +41,11 @@ router.get("/thread/:threadId", async (res, req) => {
 });
 
 //deleting a thread
-router.get("/thread/:threadId", async (req, res) => {
+router.delete("/thread/:threadId", async (req, res) => {
     try {
         const { threadId } = req.params;
 
-        const deletedThread = await findOneAndDelete(threadId);
+       const deletedThread = await Thread.findOneAndDelete({ threadId: threadId });
         if (!deletedThread) {
             res.status(404).json({ error: "Thread not found" });
         }

@@ -1,72 +1,79 @@
 import './Chat.css';
 import { MyContext } from './MyContext.jsx';
 import { useContext, useState, useEffect } from 'react';
-//rehype highlight --> FOR CODE SYNTAX ->npm
+
+// rehype highlight --> for code syntax highlighting
 import rehypeHighlight from 'rehype-highlight';
 
-// react markdown --> FOR TEXT FORMATTING -> npm
+// react markdown --> for text formatting
 import ReactMarkdown from 'react-markdown';
 
-import "highlight.js/styles/github-dark.css"; //if done /github.css //it wil be light theam of codes
+import "highlight.js/styles/github-dark.css"; // dark theme for code blocks
 
 function Chat() {
-    const { newChat, prevChats, reply } = useContext(MyContext);
-    const[latestReply, setLatestReply] = useState([]);
+  const { newChat, prevChats, reply } = useContext(MyContext);
+  const [latestReply, setLatestReply] = useState(null);
 
-    //implementing typing effect
-    useEffect(()=>{
-        if(reply == null){
-            setLatestReply(null); // prevchat load
-        }
-        if(!prevChats?.length)return;
+  // Typing effect for reply
+  useEffect(() => {
+    if (reply == null) {
+      setLatestReply(null); // prevChat load
+      return;
+    }
+    if (!prevChats?.length) return;
 
-        const content = reply.split(" "); //individual words
+    const content = reply.split(" "); // individual words
+    let idx = 0;
 
-        let idx = 0;
+    const interval = setInterval(() => {
+      setLatestReply(content.slice(0, idx + 1).join(" "));
+      idx++;
+      if (idx >= content.length) clearInterval(interval);
+    }, 40);
 
-        const interval = setInterval(()=>{
-            setLatestReply(content.slice(0, idx+1).join(" "));
+    return () => clearInterval(interval); // cleanup when effect reruns
+  }, [prevChats, reply]);
 
-            idx++;
-            if(idx >= content.length) clearInterval(interval);
+  return (
+    <>
+      {newChat && <h1>Ready when you are!</h1>}
 
-        },40);
+      <div className="chats">
+        {/* render all previous chats except the last */}
+        {prevChats?.slice(0, -1).map((chat, idx) => (
+          <div
+            className={chat.role === "user" ? "userDiv" : "gptDiv"}
+            key={idx}
+          >
+            {chat.role === "user" ? (
+              <p className="userMessage">{chat.content}</p>
+            ) : (
+              <ReactMarkdown rehypePlugins={[rehypeHighlight]}>
+                {chat.content}
+              </ReactMarkdown>
+            )}
+          </div>
+        ))}
 
-    }, [prevChats, reply])
-
-    return (
-        <>
-            {newChat && <h1>Ready when you are!</h1>}
-            <div className="chats">
-                {
-                    prevChats?.slice(0, -1).map((chat, idx) => {
-                        return (
-                            <div className={chat.role === "user" ? "userDiv" : "gptDiv"} key={idx}>
-                                {
-                                    chat.role === "user"?
-                                    <p className="userMessage">{chat.content}</p>:
-                                    <ReactMarkdown rehypePlugins = {[rehypeHighlight]}  >{chat.content}</ReactMarkdown>
-                                }
-                            </div>
-                        );
-                    })
-                }
-
-                {
-                    prevChats.length >0 && latestReply != null &&
-                    <div className="gptDiv" keys={"typing"}>
-                        <ReactMarkdown rehypePlugins = {[rehypeHighlight]}>{latestReply}</ReactMarkdown>
-                        </div>
-
-                }
-
-                
-
-
+        {/* render the last chat (typing effect or static) */}
+        {prevChats.length > 0 && (
+          latestReply == null ? (
+            <div className="gptDiv" key="non-typing">
+              <ReactMarkdown rehypePlugins={[rehypeHighlight]}>
+                {prevChats[prevChats.length - 1].content}
+              </ReactMarkdown>
             </div>
-
-
-        </>
-    )
+          ) : (
+            <div className="gptDiv" key="typing">
+              <ReactMarkdown rehypePlugins={[rehypeHighlight]}>
+                {latestReply}
+              </ReactMarkdown>
+            </div>
+          )
+        )}
+      </div>
+    </>
+  );
 }
+
 export default Chat;
