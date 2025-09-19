@@ -10,6 +10,8 @@ import ReactMarkdown from 'react-markdown';
 
 import "highlight.js/styles/github-dark.css"; // dark theme for code blocks
 
+
+
 function Chat() {
   const { newChat, prevChats, reply } = useContext(MyContext);
   const [latestReply, setLatestReply] = useState(null);
@@ -33,6 +35,8 @@ function Chat() {
 
     return () => clearInterval(interval); // cleanup when effect reruns
   }, [prevChats, reply]);
+
+  
 
   return (
     <>
