@@ -1,4 +1,5 @@
 import express from "express";
+const app = express();
 import 'dotenv/config'; //It automatically loads your .env file and populates process.env with the variables inside
 import cors from "cors";
 import mongoose from "mongoose";
@@ -10,7 +11,8 @@ import session from 'express-session';
 import cookieParser from 'cookie-parser';
 import flash from 'connect-flash';
 import userRoutes  from './routes/user.js';
-const app = express();
+import authRoute  from "./routes/AuthRoute.js";
+
 
 const sessionOptions ={
     secret: "mysupersecretcode",
@@ -23,37 +25,41 @@ const sessionOptions ={
         secure:false, //set true if https
     }
 }
-app.use(session(sessionOptions));
+app.use(express.json());
 app.use(cookieParser());
-app.use(flash());
 
-app.use(passport.initialize());
-app.use(passport.session());
-passport.use(new LocalStrategy(User.authenticate()));
-passport.serializeUser(User.serializeUser());
-passport.deserializeUser(User.deserializeUser());
+app.use("/", authRoute);
+app.use("/api", chatRoutes);
+app.use("/", userRoutes);
+
+
+// app.use(passport.initialize());
+// app.use(passport.session());
+// passport.use(new LocalStrategy(User.authenticate()));
+// passport.serializeUser(User.serializeUser());
+// passport.deserializeUser(User.deserializeUser());
 
 
 
 app.use(cors({
     origin: "http://localhost:5173",
+    methods: ["GET", "POST", "PUT", "DELETE"],
     credentials: true
 }));
 
-app.get('/demouser', async(req, res)=>{
-    let fakeUser = new User({
-        email: "student@gmail.com",
-        username: "delta-student",
-    });
+// app.get('/demouser', async(req, res)=>{
+//     let fakeUser = new User({
+//         email: "student@gmail.com",
+//         username: "delta-student",
+//     });
 
-    let registeredUser = await User.register(fakeUser, "helloworld");
-    res.send(registeredUser);
-});
-app.use(express.json());
+//     let registeredUser = await User.register(fakeUser, "helloworld");
+//     res.send(registeredUser);
+// });
+// app.use(express.json());
 
 
-app.use("/api", chatRoutes);
-app.use("/", userRoutes);
+
 
 app.listen(8080,()=>{
     console.log("Port 8080 is listening!");
@@ -63,7 +69,10 @@ app.listen(8080,()=>{
 
 const connectDB = async()=>{
     try{
-        await mongoose.connect(process.env.MONGODB_URL);
+        await mongoose.connect(process.env.MONGODB_URL,{
+            useNewUrlParser: true,
+            useUnifiedTopology: true,
+        });
         console.log("Connection to DB is successful");
 
     }catch(err){
