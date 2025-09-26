@@ -99,22 +99,22 @@ router.post("/chat", async (req, res) => {
 
 
 
-router.post('/test', async (req, res) => {
-    try {
-        const thread = new Thread({
-            threadId: "a4",
-            title: "griffith is machivalli"
-        });
-        const response = await thread.save();
-        res.send(response);
+// router.post('/test', async (req, res) => {
+//     try {
+//         const thread = new Thread({
+//             threadId: "a4",
+//             title: "griffith is machivalli"
+//         });
+//         const response = await thread.save();
+//         res.send(response);
 
-    } catch (err) {
-        console.log(err);
-        res.status(500).json({ error: "failed to save in db" });
-    }
+//     } catch (err) {
+//         console.log(err);
+//         res.status(500).json({ error: "failed to save in db" });
+//     }
 
 
-});
+// });
 
 
 

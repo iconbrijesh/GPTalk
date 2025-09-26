@@ -14,19 +14,27 @@ import userRoutes  from './routes/user.js';
 import authRoute  from "./routes/AuthRoute.js";
 
 
-const sessionOptions ={
-    secret: "mysupersecretcode",
-    resave: false,
-    saveUninitialized:true,
-    cookie:{
-        // expires:new Date(Date.now() +7*24*60*60*1000),
-        maxAge:7*24*60*60*1000,
-        httpOnly: true, //protect us from cross scripting attack
-        secure:false, //set true if https
-    }
-}
+// const sessionOptions ={
+//     secret: "mysupersecretcode",
+//     resave: false,
+//     saveUninitialized:true,
+//     cookie:{
+//         // expires:new Date(Date.now() +7*24*60*60*1000),
+//         maxAge:7*24*60*60*1000,
+//         httpOnly: true, //protect us from cross scripting attack
+//         secure:false, //set true if https
+//     }
+// }
 app.use(express.json());
 app.use(cookieParser());
+
+app.use(cors({
+    origin: "http://localhost:5173",
+    methods: ["GET", "POST", "PUT", "DELETE"],
+    credentials: true
+}));
+
+
 
 app.use("/", authRoute);
 app.use("/api", chatRoutes);
@@ -41,11 +49,6 @@ app.use("/", userRoutes);
 
 
 
-app.use(cors({
-    origin: "http://localhost:5173",
-    methods: ["GET", "POST", "PUT", "DELETE"],
-    credentials: true
-}));
 
 // app.get('/demouser', async(req, res)=>{
 //     let fakeUser = new User({
