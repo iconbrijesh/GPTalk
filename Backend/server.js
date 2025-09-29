@@ -12,6 +12,9 @@ import cookieParser from 'cookie-parser';
 import flash from 'connect-flash';
 import userRoutes  from './routes/user.js';
 import authRoute  from "./routes/AuthRoute.js";
+import healthcheck from "./routes/healthcheck.route.js";
+
+
 
 
 // const sessionOptions ={
@@ -29,16 +32,18 @@ app.use(express.json());
 app.use(cookieParser());
 
 app.use(cors({
-    origin: "http://localhost:5173",
+    origin: "http://localhost:8080",
     methods: ["GET", "POST", "PUT", "DELETE"],
     credentials: true
 }));
 
 
 
+
 app.use("/", authRoute);
 app.use("/api", chatRoutes);
 app.use("/", userRoutes);
+app.use("/", healthcheck);
 
 
 // app.use(passport.initialize());
