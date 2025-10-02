@@ -3,11 +3,13 @@ import Chat from './Chat';
 import { MyContext } from "./MyContext.jsx";
 import { useContext, useState, useEffect } from 'react';
 import { PulseLoader } from "react-spinners";
+import { useNavigate } from "react-router-dom";
 
 
 function ChatWindow() {
     const { prompt, setPrompt, reply, setReply, currThreadId, prevChats, setPrevChats, setNewChat, isOpen, setIsOpen } = useContext(MyContext);
     const [loading, setLoading] = useState(false);
+    const navigate = useNavigate();
 
     const getReply = async () => {
         setLoading(true);
@@ -60,6 +62,27 @@ function ChatWindow() {
         setIsOpen(prev => ({ ...prev, profile: !prev.profile }));
     };
 
+    //logout
+    const handleLogout = async () => {
+        try {
+            const token = localStorage.getItem("accessToken");
+
+            await fetch("http://localhost:8080/api/auth/logout", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    Authorization: `Bearer ${token}`,
+                },
+            });
+
+            localStorage.removeItem("accessToken");
+            setIsOpen(prev => ({ ...prev, profile: false })); // close dropdown
+            navigate("/login");
+        } catch (err) {
+            console.error("Logout failed:", err);
+        }
+    };
+
 
 
     return (
@@ -75,7 +98,9 @@ function ChatWindow() {
                 <div className="dropDown">
                     <div className="dropDownItem"><i className="fa-solid fa-gear"></i> Settings</div>
                     <div className="dropDownItem"><i className="fa-solid fa-cloud-arrow-up"></i> Upgrade plan</div>
-                    <div className="dropDownItem"><i className="fa-solid fa-arrow-right-from-bracket"></i> Log out</div>
+                    <div className="dropDownItem" onClick={handleLogout}>
+                        <i className="fa-solid fa-arrow-right-from-bracket"></i> Log out
+                    </div>
                 </div>
             }
             <Chat />
