@@ -7,7 +7,7 @@
   justify-content: space-between;
   text-align: left;
   padding: 1rem 2rem;
-  overflow-y: auto;
+  /* overflow-y: auto; */
 }
 
 /* navbar */
@@ -40,7 +40,7 @@
     display:flex;
     justify-content:center;
     align-items: center;
-    
+
 }
 
 /* chat input */
