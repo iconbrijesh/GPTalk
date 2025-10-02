@@ -4,12 +4,12 @@ import 'dotenv/config'; //It automatically loads your .env file and populates pr
 import cors from "cors";
 import mongoose from "mongoose";
 import chatRoutes from './routes/chat.js';
-import passport from 'passport';
+
 import LocalStrategy from 'passport-local';
 import User from './models/user.js';
 import session from 'express-session';
 import cookieParser from 'cookie-parser';
-import flash from 'connect-flash';
+
 import userRoutes  from './routes/user.js';
 import authRoute  from "./routes/AuthRoute.js";
 import healthcheck from "./routes/healthcheck.route.js";
@@ -31,42 +31,20 @@ import healthcheck from "./routes/healthcheck.route.js";
 app.use(express.json());
 app.use(cookieParser());
 
-app.use(cors({
-    origin: "http://localhost:8080",
-    methods: ["GET", "POST", "PUT", "DELETE"],
-    credentials: true
-}));
-
-
+app.use(
+  cors({
+    origin: process.env.CORS_ORIGIN?.split(",") || "http://localhost:5173",
+    credentials: true,
+    methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
+    allowedHeaders: ["Content-Type", "Authorization"],
+  }),
+);
 
 
 app.use("/", authRoute);
 app.use("/api", chatRoutes);
 app.use("/", userRoutes);
 app.use("/", healthcheck);
-
-
-// app.use(passport.initialize());
-// app.use(passport.session());
-// passport.use(new LocalStrategy(User.authenticate()));
-// passport.serializeUser(User.serializeUser());
-// passport.deserializeUser(User.deserializeUser());
-
-
-
-
-// app.get('/demouser', async(req, res)=>{
-//     let fakeUser = new User({
-//         email: "student@gmail.com",
-//         username: "delta-student",
-//     });
-
-//     let registeredUser = await User.register(fakeUser, "helloworld");
-//     res.send(registeredUser);
-// });
-// app.use(express.json());
-
-
 
 
 app.listen(8080,()=>{

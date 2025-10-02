@@ -1,12 +1,13 @@
 .chatWindow {
   background-color: #212121;
   height: 100vh;
-  width: 100%;
+  flex: 1; /* ✅ fills remaining space beside sidebar */
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  align-items: center;
-  text-align: center;
+  text-align: left;
+  padding: 1rem 2rem;
+  overflow-y: auto;
 }
 
 /* navbar */
