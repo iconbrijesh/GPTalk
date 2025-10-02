@@ -105,6 +105,7 @@ function ChatWindow() {
             }
             <Chat />
             <PulseLoader
+                className="pulselod"
                 color="#fff"
                 loading={loading}
 
