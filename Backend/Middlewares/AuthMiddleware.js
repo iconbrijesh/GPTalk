@@ -1,23 +1,28 @@
-const User = require("../models/user.js");
-require("dotenv").config();
-const jwt = require("jsonwebtoken");
+import User from "../models/user.js";
+import {ExpressError} from "../utils/ExpressError.js";
+import {wrapAsync} from "../utils/wrapAsync.js";
 
-module.exports.userVerification = async (req, res, next) => {
-  try {
-    const token = req.cookies.token;
-    if (!token) return res.json({ status: false });
+export const verifyJWT = wrapAsync(async (req, res, next) => {
+  const token =
+    req.cookies?.accessToken ||
+    req.header("Authorization")?.replace("Bearer ", "");
 
-    // verify token
-    const decoded = jwt.verify(token, process.env.TOKEN_KEY);
-
-    // find user
-    const user = await User.findById(decoded.id);
-    if (!user) return res.json({ status: false });
-
-    // attach user info to req for further use
-    req.user = user;
-    next(); // ✅ call next so this works as middleware
-  } catch (err) {
-    return res.json({ status: false });
+  if (!token) {
+    throw new ExpressError(401, "Unauthorized request");
   }
-};
+
+  try {
+    const decodedToken = jwt.verify(token, process.env.ACCESS_TOKEN_SECRET);
+    const user = await User.findById(decodedToken?._id).select(
+      "-password -refreshToken -emailVerificationToken -emailVerificationExpiry",
+    );
+
+    if (!user) {
+      throw new ExpressError(401, "Invalid access token");
+    }
+    req.user = user;
+    next();
+  } catch (error) {
+    throw new ExpressError(401, "Invalid access token");
+  }
+});
