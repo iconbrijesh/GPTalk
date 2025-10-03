@@ -4,3 +4,4 @@ Frontend/node_modules
 
 #Ignore .env
 Backend/.env
+Frontend/.env
