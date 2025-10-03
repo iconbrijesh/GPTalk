@@ -1,25 +1,43 @@
-.chats {
-  max-width: 700px;
-  margin: 0 auto;
-  padding: 2rem;
+.chat-window {
+  position: fixed;
+  top: 100px; /* adjust based on your navbar height */
+  bottom: 100px; /* adjust based on input box height */
+  left: 0;
+  right: 0;
   overflow-y: auto;
-  max-height: calc(100vh - 200px); /* adjust based on navbar/input height */
+  padding: 2rem;
   scrollbar-width: thin;
   scrollbar-color: #555 #171717;
 }
 
-/* For WebKit browsers */
-.chats::-webkit-scrollbar {
+/* WebKit scrollbar styling */
+.chat-window::-webkit-scrollbar {
   width: 6px;
 }
 
-.chats::-webkit-scrollbar-track {
+.chat-window::-webkit-scrollbar-track {
   background: #171717;
 }
 
-.chats::-webkit-scrollbar-thumb {
+.chat-window::-webkit-scrollbar-thumb {
   background-color: #555;
   border-radius: 10px;
+}
+/* .chat-window {
+  border: 2px dashed red;
+}
+.chats {
+  border: 2px dashed blue;
+} */
+
+
+.chats {
+  width: 100%;
+  max-width: 700px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
 }
 .userDiv{
     display:flex;
