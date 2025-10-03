@@ -1,5 +1,5 @@
+/* chat-window */
 .chat-window {
-  position: fixed;
   top: 100px; /* adjust based on your navbar height */
   bottom: 100px; /* adjust based on input box height */
   left: 0;
@@ -8,6 +8,11 @@
   padding: 2rem;
   scrollbar-width: thin;
   scrollbar-color: #555 #171717;
+  z-index: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  box-sizing: border-box;
 }
 
 /* WebKit scrollbar styling */
@@ -23,36 +28,41 @@
   background-color: #555;
   border-radius: 10px;
 }
-/* .chat-window {
+.chat-window {
   border: 2px dashed red;
 }
 .chats {
   border: 2px dashed blue;
-} */
+}
 
-
+/* chats */
 .chats {
-  width: 100%;
   max-width: 700px;
-  margin: 0 auto;
+  width: 100%;
+  position: relative;
+
   display: flex;
   flex-direction: column;
+  justify-content: space-between;
+  align-items: center;
+
   gap: 1rem;
+  padding: 0 1rem;
+  box-sizing: border-box;
 }
-.userDiv{
-    display:flex;
-    justify-content:flex-end;
-    font-size:0.9rem;
-
-
+.userDiv {
+  display: flex;
+  justify-content: flex-end;
+  font-size: 0.9rem;
 }
-.gptDiv{
-    text-align:left;
-    font-size:0.9rem;
-    /* background-color:#3B3A3D; */
-    margin:2rem 0 2rem 0;
-    
+.gptDiv {
+  text-align: left;
+  font-size: 0.9rem;
 
+  margin: 2rem 0 2rem 0;
+  max-width: 90%;
+  width: fit-content;
+  align-self: flex-start;
 }
 .chat-heading {
   text-align: center;
@@ -61,21 +71,20 @@
   margin-top: 2rem;
 }
 
-.userMessage{
-    background-color:#4D4D50;
-    border-radius:14px;
-    padding:10px 20px;
-    margin-left:15rem;
-    max-width:500px;
-    width:fit-content;
-
-    
+.userMessage {
+  background-color: #4d4d50;
+  border-radius: 14px;
+  padding: 10px 20px;
+  margin-left: auto;
+  max-width: 90%;
+  width: fit-content;
+  margin-left: auto;
 }
 
 .hljs {
-    border-radius: 14px !important;
+  border-radius: 14px !important;
 }
 
 pre {
-    white-space: pre-wrap;
+  white-space: pre-wrap;
 }
