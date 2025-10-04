@@ -34,13 +34,15 @@ const Login = () => {
 
       const { success, message, token } = data;
 
-      if (success) {
+      if (success && token) {
         handleSuccess(message);
         setAuthToken(token);
         localStorage.setItem("token", token);
-        setTimeout(() => navigate("/chat"), 1000); // ✅ redirect to /chat
+        navigate("/chat");
+      } else if (success && !token) {
+        handleError("Login succeeded but no token received.");
       } else {
-        handleError(message);
+        handleError(message || "Login failed");
       }
     } catch (error) {
       console.error("Login error:", error);
@@ -84,11 +86,11 @@ const Login = () => {
           </span>
         </form>
         <ToastContainer />
-      
-     
+
+
       </div>
     </div>
-   );
+  );
 
 };
 
