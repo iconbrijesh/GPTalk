@@ -24,32 +24,33 @@ const Signup = () => {
   const handleSuccess = (msg) =>
     toast.success(msg, { position: "bottom-left" });
 
- const handleSubmit = async (e) => {
+const handleSubmit = async (e) => {
   e.preventDefault();
   try {
     const { data } = await axios.post(
-      `${process.env.REACT_APP_API_URL}/register`,
+      `${process.env.REACT_APP_API_URL}/login`,
       inputValue,
       { withCredentials: true }
     );
 
-    console.log("Signup response:", data);
+    console.log("Login response:", data);
 
-    const success = data?.success;
-    const message = data?.message;
+    const token = data?.token;
 
-    if (success) {
-      handleSuccess("Signup successful. Please verify your email before logging in.");
-      navigate("/login");
+    if (token) {
+      handleSuccess("Login successful");
+      setAuthToken(token);
+      localStorage.setItem("token", token);
+      navigate("/chat");
     } else {
-      handleError(message || "Signup failed");
+      handleError("Login failed: Token not received");
     }
   } catch (error) {
-    console.error("Signup error:", error);
+    console.error("Login error:", error);
     handleError(error?.response?.data?.message || "Something went wrong");
   }
 
-  setInputValue({ email: "", password: "", username: "" });
+  setInputValue({ email: "", password: "" });
 };
 
   return (
