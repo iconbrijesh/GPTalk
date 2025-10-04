@@ -22,14 +22,36 @@ function App() {
     profile: false,
   });
 
+  // useEffect(() => {
+  //   fetch(`${process.env.REACT_APP_API_URL}/signup`, {
+  //     method: 'GET',
+  //     credentials: 'include',
+  //   })
+  //     .then((res) => res.text())
+  //     .then((data) => console.log(data));
+  // }, []);
+
   useEffect(() => {
-    fetch(`${process.env.REACT_APP_API_URL}/signup`, {
-      method: 'GET',
-      credentials: 'include',
+  const token = localStorage.getItem("token");
+  if (!token) return;
+
+  fetch(`${process.env.REACT_APP_API_URL}/current-user`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
+    },
+    credentials: "include",
+  })
+    .then((res) => res.json())
+    .then((data) => {
+      console.log("Authenticated user:", data);
+      // optionally set user state here
     })
-      .then((res) => res.text())
-      .then((data) => console.log(data));
-  }, []);
+    .catch((err) => {
+      console.error("Auth check failed:", err);
+    });
+}, []);
 
   const providerValues = {
     authToken,
