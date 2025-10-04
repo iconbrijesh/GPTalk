@@ -24,35 +24,33 @@ const Signup = () => {
   const handleSuccess = (msg) =>
     toast.success(msg, { position: "bottom-left" });
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    try {
-      const { data } = await axios.post(
-        `${process.env.REACT_APP_API_URL}/register`,
-        inputValue,
-        { withCredentials: true }
-      );
+ const handleSubmit = async (e) => {
+  e.preventDefault();
+  try {
+    const { data } = await axios.post(
+      `${process.env.REACT_APP_API_URL}/register`,
+      inputValue,
+      { withCredentials: true }
+    );
 
-      console.log("Signup response:", data); // helpful for debugging
+    console.log("Signup response:", data);
 
-      const success = data?.success;
-      const message = data?.message;
+    const success = data?.success;
+    const message = data?.message;
 
-      if (success) {
-        handleSuccess("Signup successful. Please verify your email before logging in.");
-        navigate("/login"); // or "/verify-info" if you build that page
-      } else {
-        handleError(message || "Signup failed");
-      }
-    } catch (error) {
-      console.error("Signup error:", error);
-      handleError(
-        error?.response?.data?.message || "Something went wrong. Please try again."
-      );
+    if (success) {
+      handleSuccess("Signup successful. Please verify your email before logging in.");
+      navigate("/login");
+    } else {
+      handleError(message || "Signup failed");
     }
+  } catch (error) {
+    console.error("Signup error:", error);
+    handleError(error?.response?.data?.message || "Something went wrong");
+  }
 
-    setInputValue({ email: "", password: "", username: "" });
-  };
+  setInputValue({ email: "", password: "", username: "" });
+};
 
   return (
     <div className="auth-wrapper">

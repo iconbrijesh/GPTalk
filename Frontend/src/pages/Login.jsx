@@ -23,37 +23,36 @@ const Login = () => {
   const handleSuccess = (msg) =>
     toast.success(msg, { position: "bottom-left" });
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    try {
-      const { data } = await axios.post(
-        `${process.env.REACT_APP_API_URL}/login`,
-        inputValue,
-        { withCredentials: true }
-      );
+ const handleSubmit = async (e) => {
+  e.preventDefault();
+  try {
+    const { data } = await axios.post(
+      `${process.env.REACT_APP_API_URL}/login`,
+      inputValue,
+      { withCredentials: true }
+    );
 
-      console.log("Login response:", data); // helpful for debugging
-      const success = data?.success;
-      const message = data?.message;
-      const accessToken = data?.data?.accessToken;
+    console.log("Login response:", data);
 
-      if (success && accessToken) {
-        handleSuccess(message || "Login successful");
-        setAuthToken(accessToken);
-        localStorage.setItem("token", accessToken);
-        navigate("/chat");
-      } else {
-        handleError(message || "Login failed");
-      }
-    } catch (error) {
-      console.error("Login error:", error);
-      handleError(
-        error?.response?.data?.message || "Something went wrong. Please try again."
-      );
+    const success = data?.success;
+    const message = data?.message;
+    const accessToken = data?.data?.accessToken;
+
+    if (success && accessToken) {
+      handleSuccess(message || "Login successful");
+      setAuthToken(accessToken);
+      localStorage.setItem("token", accessToken);
+      navigate("/chat");
+    } else {
+      handleError(message || "Login failed");
     }
+  } catch (error) {
+    console.error("Login error:", error);
+    handleError(error?.response?.data?.message || "Something went wrong");
+  }
 
-    setInputValue({ email: "", password: "" });
-  };
+  setInputValue({ email: "", password: "" });
+};
 
   return (
     <div className="auth-wrapper">
