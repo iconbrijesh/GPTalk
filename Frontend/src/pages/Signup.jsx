@@ -30,18 +30,10 @@ const Signup = () => {
       const { data } = await axios.post(`${process.env.REACT_APP_API_URL}/register`, inputValue, { withCredentials: true });
 
       const { success, message, token } = data;
-
-      if (data?.success && data?.token) {
-        console.log("✅ Signup successful. Token received:", data.token);
+      if (data?.success) {
         handleSuccess(data.message || "Signup successful");
-        setAuthToken(data.token);
-        localStorage.setItem("token", data.token);
-        navigate("/chat"); // You can keep the delay if needed
-      } else if (data?.success && !data?.token) {
-        console.warn("⚠️ Signup succeeded but no token was returned.");
-        handleError("Signup succeeded but no token received.");
+        navigate("/login"); // Redirect to login after signup
       } else {
-        console.error("❌ Signup failed. Response:", data);
         handleError(data?.message || "Signup failed");
       }
     } catch (error) {

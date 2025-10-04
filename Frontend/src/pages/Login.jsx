@@ -32,20 +32,15 @@ const Login = () => {
         { withCredentials: true }
       );
 
-      const { success, message, token } = data;
+      const { success, message, data: { accessToken, refreshToken, user } } = response.data;
 
-      if (data?.success && data?.token) {
-        console.log("✅ Login successful. Token received:", data.token);
-        handleSuccess(data.message || "Login successful");
-        setAuthToken(data.token);
-        localStorage.setItem("token", data.token);
+      if (success && accessToken) {
+        handleSuccess(message);
+        setAuthToken(accessToken);
+        localStorage.setItem("token", accessToken);
         navigate("/chat");
-      } else if (data?.success && !data?.token) {
-        console.warn("⚠️ Login succeeded but no token was returned.");
-        handleError("Login succeeded but no token received.");
       } else {
-        console.error("❌ Login failed. Response:", data);
-        handleError(data?.message || "Login failed");
+        handleError(message || "Login failed");
       }
     } catch (error) {
       console.error("Login error:", error);
