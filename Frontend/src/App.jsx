@@ -23,7 +23,7 @@ function App() {
   });
 
   useEffect(() => {
-    fetch(`${process.env.REACT_APP_BACKEND_URL}/signup`, {
+    fetch(`${process.env.REACT_APP_API_URL}/signup`, {
       method: 'GET',
       credentials: 'include',
     })
