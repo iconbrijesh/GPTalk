@@ -8,6 +8,7 @@ function Sidebar() {
     const { allThreads, setAllThreads, currThreadId, setNewChat, setReply, setPrompt, setPrevChats, setCurrThreadId, isOpen, setIsOpen } = useContext(MyContext);
 
 
+
     const toggleSidebar = () => {
         setIsOpen(prev => ({ ...prev, sidebar: !prev.sidebar }));
     };
@@ -15,7 +16,7 @@ function Sidebar() {
 
     const getAllThreads = async () => {
         try {
-            let response = await fetch(`${process.env.REACT_APP_BACKEND_URL}/api/thread`);
+            let response = await fetch(`${process.env.REACT_APP_API_URL}/api/thread`);
             const res = await response.json();
 
 
@@ -49,7 +50,7 @@ function Sidebar() {
     const changeThread = async (newThreadId) => {
         setCurrThreadId(newThreadId);
         try {
-            const response = await fetch(`${process.env.REACT_APP_BACKEND_URL}/api/thread/${newthreadId}`);
+            const response = await fetch(`${process.env.REACT_APP_API_URL}/api/thread/${newthreadId}`);
             const res = await response.json();
             console.log(res);
             setPrevChats(res);
@@ -63,7 +64,7 @@ function Sidebar() {
 
     const deleteThread = async (newthreadId) => {
         try {
-            const response = await fetch(`${process.env.REACT_APP_BACKEND_URL}/api/thread/${newthreadId}`
+            const response = await fetch(`${process.env.REACT_APP_API_URL}/api/thread/${newthreadId}`
                 , { method: "DELETE" });
             const res = await response.json();
             console.log(res);
