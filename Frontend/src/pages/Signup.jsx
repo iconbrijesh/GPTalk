@@ -30,11 +30,11 @@ const Signup = () => {
       const { data } = await axios.post(`${process.env.REACT_APP_API_URL}/register`, inputValue, { withCredentials: true });
 
       const { success, message, token } = data;
-      if (data?.success) {
-        handleSuccess(data.message || "Signup successful");
-        navigate("/login"); // Redirect to login after signup
+      if (success) {
+        handleSuccess("Signup successful. Please verify your email before logging in.");
+        navigate("/login"); // or a custom /verify-info page
       } else {
-        handleError(data?.message || "Signup failed");
+        handleError(message || "Signup failed");
       }
     } catch (error) {
       console.error("Signup error:", error);

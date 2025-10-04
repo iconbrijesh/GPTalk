@@ -32,19 +32,29 @@ const Login = () => {
         { withCredentials: true }
       );
 
-      const { success, message, data: { accessToken, refreshToken, user } } = response.data;
+      console.log("Login response:", data); // helpful for debugging
+
+      const {
+        success,
+        message,
+        data: { accessToken, refreshToken, user },
+      } = data;
 
       if (success && accessToken) {
-        handleSuccess(message);
+        handleSuccess(message || "Login successful");
         setAuthToken(accessToken);
         localStorage.setItem("token", accessToken);
         navigate("/chat");
+      } else if (success && !accessToken) {
+        handleError("Login succeeded but no token received.");
       } else {
         handleError(message || "Login failed");
       }
     } catch (error) {
       console.error("Login error:", error);
-      handleError("Something went wrong. Please try again.");
+      handleError(
+        error?.response?.data?.message || "Something went wrong. Please try again."
+      );
     }
 
     setInputValue({ email: "", password: "" });
@@ -52,7 +62,6 @@ const Login = () => {
 
   return (
     <div className="auth-wrapper">
-
       <div className="form_container">
         <h2>Login Account</h2>
         <form onSubmit={handleSubmit}>
@@ -84,12 +93,9 @@ const Login = () => {
           </span>
         </form>
         <ToastContainer />
-
-
       </div>
     </div>
   );
-
 };
 
 export default Login;
