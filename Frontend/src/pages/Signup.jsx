@@ -31,13 +31,18 @@ const Signup = () => {
 
       const { success, message, token } = data;
 
-      if (success) {
-        handleSuccess(message);
-        setAuthToken(token);
-        localStorage.setItem("token", token);
-        setTimeout(() => navigate("/chat"), 1000);
+      if (data?.success && data?.token) {
+        console.log("✅ Signup successful. Token received:", data.token);
+        handleSuccess(data.message || "Signup successful");
+        setAuthToken(data.token);
+        localStorage.setItem("token", data.token);
+        navigate("/chat"); // You can keep the delay if needed
+      } else if (data?.success && !data?.token) {
+        console.warn("⚠️ Signup succeeded but no token was returned.");
+        handleError("Signup succeeded but no token received.");
       } else {
-        handleError(message);
+        console.error("❌ Signup failed. Response:", data);
+        handleError(data?.message || "Signup failed");
       }
     } catch (error) {
       console.error("Signup error:", error);
