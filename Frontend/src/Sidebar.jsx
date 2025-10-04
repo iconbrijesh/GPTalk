@@ -4,18 +4,18 @@ import { MyContext } from "./MyContext.jsx";
 import { v1 as uuidv1 } from 'uuid';
 
 function Sidebar() {
-   
-    const { allThreads, setAllThreads, currThreadId, setNewChat, setReply, setPrompt, setPrevChats, setCurrThreadId,isOpen, setIsOpen } = useContext(MyContext);
+
+    const { allThreads, setAllThreads, currThreadId, setNewChat, setReply, setPrompt, setPrevChats, setCurrThreadId, isOpen, setIsOpen } = useContext(MyContext);
 
 
-   const toggleSidebar = () => {
-  setIsOpen(prev => ({ ...prev, sidebar: !prev.sidebar }));
-};
+    const toggleSidebar = () => {
+        setIsOpen(prev => ({ ...prev, sidebar: !prev.sidebar }));
+    };
 
 
     const getAllThreads = async () => {
         try {
-            let response = await fetch("http://localhost:8080/api/thread");
+            let response = await fetch(`${process.env.REACT_APP_BACKEND_URL}/api/thread`);
             const res = await response.json();
 
 
@@ -49,7 +49,7 @@ function Sidebar() {
     const changeThread = async (newThreadId) => {
         setCurrThreadId(newThreadId);
         try {
-            const response = await fetch(`http://localhost:8080/api/thread/${newThreadId}`);
+            const response = await fetch(`${process.env.REACT_APP_BACKEND_URL}/api/thread/${newthreadId}`);
             const res = await response.json();
             console.log(res);
             setPrevChats(res);
@@ -63,14 +63,15 @@ function Sidebar() {
 
     const deleteThread = async (newthreadId) => {
         try {
-            const response = await fetch(`http://localhost:8080/api/thread/${newthreadId}`, { method: "DELETE" });
+            const response = await fetch(`${process.env.REACT_APP_BACKEND_URL}/api/thread/${newthreadId}`
+                , { method: "DELETE" });
             const res = await response.json();
             console.log(res);
 
             //up-dated threads re-render
-            setAllThreads(prev =>prev.filter(thread=> thread.threadId !== newthreadId))
-             
-             if(newthreadId === currThreadId) {
+            setAllThreads(prev => prev.filter(thread => thread.threadId !== newthreadId))
+
+            if (newthreadId === currThreadId) {
                 createNewChat();
             }
 
@@ -115,9 +116,9 @@ function Sidebar() {
                 <ul>{isOpen.sidebar ? allThreads?.map((thread, idx) => (
                     <li key={idx}
                         onClick={(e) => changeThread(thread.threadId)}
-                        assName={thread.threadId === currThreadId ? "highlighted": " "}
-                        >
-                    {thread.title}
+                        assName={thread.threadId === currThreadId ? "highlighted" : " "}
+                    >
+                        {thread.title}
                         <span><i className="fa-solid fa-trash-can"
                             onClick={(e) => {
                                 e.stopPropagation(); // stops event bubbling

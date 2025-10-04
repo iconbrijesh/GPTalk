@@ -27,7 +27,7 @@ function ChatWindow() {
         };
 
         try {
-            const response = await fetch("http://localhost:8080/api/chat", options);
+            const response = await fetch(`${process.env.REACT_APP_BACKEND_URL}/api/chat`, options);
             const res = await response.json();
             setReply(res.reply);
             console.log(res);
@@ -67,7 +67,7 @@ function ChatWindow() {
         try {
             const token = localStorage.getItem("accessToken");
 
-            await fetch("http://localhost:8080/api/auth/logout", {
+            await fetch(`${process.env.REACT_APP_BACKEND_URL}/api/auth/logout`, {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",

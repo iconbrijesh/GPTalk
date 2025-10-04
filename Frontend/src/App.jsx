@@ -23,7 +23,7 @@ function App() {
   });
 
   useEffect(() => {
-    fetch('http://localhost:8080/signup', {
+    fetch(`${process.env.REACT_APP_BACKEND_URL}/signup`, {
       method: 'GET',
       credentials: 'include',
     })

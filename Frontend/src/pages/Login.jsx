@@ -27,7 +27,7 @@ const Login = () => {
     e.preventDefault();
     try {
       const { data } = await axios.post(
-        "http://localhost:8080/login",
+        `${process.env.REACT_APP_API_URL}/login`,
         inputValue,
         { withCredentials: true }
       );

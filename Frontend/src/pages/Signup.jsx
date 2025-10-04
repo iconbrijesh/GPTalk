@@ -28,7 +28,7 @@ const Signup = () => {
     e.preventDefault();
     try {
       const { data } = await axios.post(
-        "http://localhost:8080/register",
+        BACKEND_URL,
         inputValue,
         { withCredentials: true }
       );
