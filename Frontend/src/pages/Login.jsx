@@ -33,20 +33,15 @@ const Login = () => {
       );
 
       console.log("Login response:", data); // helpful for debugging
-
-      const {
-        success,
-        message,
-        data: { accessToken, refreshToken, user },
-      } = data;
+      const success = data?.success;
+      const message = data?.message;
+      const accessToken = data?.data?.accessToken;
 
       if (success && accessToken) {
         handleSuccess(message || "Login successful");
         setAuthToken(accessToken);
         localStorage.setItem("token", accessToken);
         navigate("/chat");
-      } else if (success && !accessToken) {
-        handleError("Login succeeded but no token received.");
       } else {
         handleError(message || "Login failed");
       }

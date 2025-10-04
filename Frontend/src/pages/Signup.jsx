@@ -27,21 +27,31 @@ const Signup = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const { data } = await axios.post(`${process.env.REACT_APP_API_URL}/register`, inputValue, { withCredentials: true });
+      const { data } = await axios.post(
+        `${process.env.REACT_APP_API_URL}/register`,
+        inputValue,
+        { withCredentials: true }
+      );
 
-      const { success, message, token } = data;
+      console.log("Signup response:", data); // helpful for debugging
+
+      const success = data?.success;
+      const message = data?.message;
+
       if (success) {
         handleSuccess("Signup successful. Please verify your email before logging in.");
-        navigate("/login"); // or a custom /verify-info page
+        navigate("/login"); // or "/verify-info" if you build that page
       } else {
         handleError(message || "Signup failed");
       }
     } catch (error) {
       console.error("Signup error:", error);
-      handleError("Something went wrong. Please try again.");
+      handleError(
+        error?.response?.data?.message || "Something went wrong. Please try again."
+      );
     }
 
-    setInputValue({ username: "", email: "", password: "" });
+    setInputValue({ email: "", password: "", username: "" });
   };
 
   return (
