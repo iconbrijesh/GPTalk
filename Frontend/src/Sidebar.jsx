@@ -50,7 +50,7 @@ function Sidebar() {
     const changeThread = async (newThreadId) => {
         setCurrThreadId(newThreadId);
         try {
-            const response = await fetch(`${process.env.REACT_APP_API_URL}/api/thread/${newthreadId}`);
+            const response = await fetch(`${process.env.REACT_APP_API_URL}/api/thread/${newThreadId}`);
             const res = await response.json();
             console.log(res);
             setPrevChats(res);
@@ -117,7 +117,7 @@ function Sidebar() {
                 <ul>{isOpen.sidebar ? allThreads?.map((thread, idx) => (
                     <li key={idx}
                         onClick={(e) => changeThread(thread.threadId)}
-                        assName={thread.threadId === currThreadId ? "highlighted" : " "}
+                        className={thread.threadId === currThreadId ? "highlighted" : " "}
                     >
                         {thread.title}
                         <span><i className="fa-solid fa-trash-can"
