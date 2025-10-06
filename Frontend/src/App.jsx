@@ -35,7 +35,7 @@ function App() {
   const token = localStorage.getItem("token");
   if (!token) return;
 
-  fetch(`${process.env.REACT_APP_API_URL}/current-user`, {
+  fetch(`${import.meta.env.VITE_API_URL}/current-user`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",

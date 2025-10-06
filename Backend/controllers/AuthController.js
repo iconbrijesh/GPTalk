@@ -30,13 +30,13 @@ const generateAccessAndRefreshTokens = async (userId) => {
 
 const registerUser = wrapAsync(async (req, res) => {
   const { email, username, password } = req.body;
+
   const existedUser = await User.findOne({
     $or: [{ username }, { email }]
   });
 
   if (existedUser) {
-    throw new ExpressError(409, "User with email or username already exits", []);
-
+    throw new ExpressError(409, "User with email or username already exists");
   }
 
   const user = await User.create({
@@ -44,16 +44,16 @@ const registerUser = wrapAsync(async (req, res) => {
     password,
     username,
     isEmailVerified: false
-  })
+  });
 
   const { unHashedToken, hashedToken, tokenExpiry } = user.generateTemporaryToken();
 
-  user.emailVerificationToken = hashedToken
-  user.emailVerificationExpiry = tokenExpiry
-  await user.save({ validateBeforeSave: false })
+  user.emailVerificationToken = hashedToken;
+  user.emailVerificationExpiry = tokenExpiry;
+  await user.save({ validateBeforeSave: false });
 
   await sendEmail({
-    email: user?.email,
+    email: user.email,
     subject: "Please verify your email",
     mailgenContent: emailVerificationMailgenContent(
       user.username,
@@ -62,71 +62,63 @@ const registerUser = wrapAsync(async (req, res) => {
   });
 
   const createdUser = await User.findById(user._id).select(
-    "-password -refreshToken -emailVerificationToken -emailVerificationExpiry",
+    "-password -refreshToken -emailVerificationToken -emailVerificationExpiry"
   );
 
-  if (!createdUser) {
-    throw new ExpressError(500, "Something went wrong while registering a user");
-  }
-
-  return res
-    .status(201)
-    .json(
-      new ApiResponse(
-        200,
-        { user: createdUser },
-        "User registered successfully and verification email has been sent on your email",
-      ),
-    );
+  return res.status(201).json(
+    new ApiResponse(
+      201,
+      { user: createdUser },
+      "User registered successfully. Please verify your email."
+    )
+  );
 });
 
 
 const login = wrapAsync(async (req, res) => {
-  const { email, password, username } = req.body;
-  if (!email) {
-    throw new ExpressError(400, "Username or email required");
+  const { email, password } = req.body;
 
+  if (!email || !password) {
+    throw new ExpressError(400, "Email and password are required");
   }
+
   const user = await User.findOne({ email });
   if (!user) {
-    throw new ExpressError(400, "user does not found");
+    throw new ExpressError(400, "User not found");
   }
 
   const isPasswordValid = await user.isPasswordCorrect(password);
   if (!isPasswordValid) {
-    throw new ExpressError(400, "Incorrect password!");
+    throw new ExpressError(400, "Incorrect password");
   }
 
-  const { accessToken, refreshToken } = await generateAccessAndRefreshTokens(
-    user._id);
+  const { accessToken, refreshToken } = await generateAccessAndRefreshTokens(user._id);
 
   const loggedInUser = await User.findById(user._id).select(
-    "-password -refreshToken -emailVerificationToken -emailVerificationExpiry",
+    "-password -refreshToken -emailVerificationToken -emailVerificationExpiry"
   );
 
   const options = {
     httpOnly: true,
     secure: true
-  }
+  };
 
-   return res
-    .status(200)
+  res
     .cookie("accessToken", accessToken, options)
-    .cookie("refreshToken", refreshToken, options)
-    .json(
-      new ApiResponse(
-        200,
-        {
-          user: loggedInUser,
-          accessToken,
-          refreshToken,
-        },
-        "User logged in successfully",
-      ),
-    );
+    .cookie("refreshToken", refreshToken, options);
 
-
-})
+  return res.status(200).json(
+    new ApiResponse(
+      200,
+      {
+        accessToken,
+        refreshToken,
+        user: loggedInUser
+      },
+      "User logged in successfully"
+    )
+  );
+});
 
 const logoutUser = wrapAsync(async(req, res)=>{
   await User.findByIdAndUpdate(
