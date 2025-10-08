@@ -5,7 +5,9 @@
 }
 label {
   font-size: 1.2rem;
-  color: #656262;
+  color: #e0e0e0;
+
+  
 }
 
 html, body, #root {
@@ -31,23 +33,30 @@ body{
   align-items: center;
   height: 100vh;
   width: 100%;
-
+  background: linear-gradient(
+    135deg,
+    #000000 0%,
+    #444444 40%,
+    #dddddd 100%
+  );
 }
 
-
 .form_container {
-  background-color: #fff;
+  background-color: rgba(255, 255, 255, 0.08); /* translucent white */
+  backdrop-filter: blur(12px); /* glassy blur effect */
+  border: 1px solid rgba(255, 255, 255, 0.2); /* subtle border */
+  border-radius: 0.75rem;
   padding: 2rem 3rem;
-  border-radius: 0.5rem;
   width: 100%;
   max-width: 400px;
-  box-shadow: 8px 8px 24px 0px rgba(66, 68, 90, 1);
+  box-shadow: 0 0 20px rgba(0, 0, 0, 0.6);
+  color: #f1f1f1;
 }
 
 .form_container > h2 {
   margin-block: 1rem;
   padding-block: 0.6rem;
-  color: rgba(0, 212, 255, 1);
+  color: rgb(1, 8, 9);
 }
 
 .form_container > form {
@@ -63,27 +72,40 @@ body{
 }
 
 .form_container input {
-  border: none;
-  padding: 0.5rem;
-  border-bottom: 1px solid gray;
-  font-size: 1.1rem;
+  background-color: rgba(255, 255, 255, 0.1);
+  color: #f1f1f1;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  padding: 0.6rem 0.8rem;
+  font-size: 1rem;
+  border-radius: 6px;
   outline: none;
+  transition: border-color 0.3s ease;
 }
 
+.form_container input:focus {
+  border-color: #dddddd;
+  background-color: rgba(255, 255, 255, 0.2);
+}
+
+
+
 .form_container input::placeholder {
-  font-size: 0.9rem;
+  color: #ccc;
   font-style: italic;
 }
 
+
 .form_container button {
-  background-color: rgba(0, 212, 255, 1);
-  color: #fff;
+  background-color: #dddddd;
+  color: #000;
   border: none;
   padding: 0.6rem;
   font-size: 1rem;
   cursor: pointer;
   border-radius: 0.3rem;
+  transition: background-color 0.3s ease;
 }
+
 
 span a {
   text-decoration: none;
@@ -93,7 +115,7 @@ span a {
 .home_page {
   height: 100vh;
   width: 100vw;
-  background: #000;
+  background: #e56565ea;
   color: white;
   display: flex;
   justify-content: center;
@@ -132,4 +154,21 @@ span a {
     padding: 0.6rem 1rem;
     font-size: 1.5rem;
   }
+}
+
+.form_container p {
+  color: #ccc;
+  text-align: center;
+  margin-top: 1rem;
+}
+
+.form_container p a {
+  color: #ffffff;
+  font-weight: bold;
+  text-decoration: underline;
+  transition: color 0.3s ease;
+}
+
+.form_container p a:hover {
+  color: #dddddd;
 }
