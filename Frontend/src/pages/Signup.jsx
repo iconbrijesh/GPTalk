@@ -20,7 +20,7 @@ const Signup = () => {
     e.preventDefault();
     try {
       const { data } = await axios.post(
-        `${process.env.REACT_APP_API_URL}/register`,
+        `${import.meta.env.VITE_API_URL}/register`,
         inputValue,
         { withCredentials: true }
       );
@@ -34,7 +34,11 @@ const Signup = () => {
         toast.success("Signup successful. Please verify your email.", {
           position: "bottom-left",
         });
-        navigate("/login");
+
+        // ✅ Pass email to verification page
+        navigate("/verify-email-pending", {
+          state: { email: inputValue.email },
+        });
       } else {
         toast.error(message || "Signup failed", { position: "bottom-left" });
       }

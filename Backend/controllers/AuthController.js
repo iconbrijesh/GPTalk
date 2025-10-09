@@ -4,6 +4,7 @@ import { wrapAsync } from "../utils/wrapAsync.js";
 import { ExpressError } from "../utils/ExpressError.js";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
+import crypto from 'crypto'; // ✅ Correct for ESM
 
 import {
   emailVerificationMailgenContent,
@@ -66,12 +67,15 @@ const registerUser = wrapAsync(async (req, res) => {
   );
 
   return res.status(201).json(
-    new ApiResponse(
-      201,
-      { user: createdUser },
-      "User registered successfully. Please verify your email."
-    )
-  );
+  new ApiResponse(
+    201,
+    {
+      user: createdUser,
+      isEmailVerified: false, // ✅ Explicitly include this
+    },
+    "User registered successfully. Please verify your email."
+  )
+);
 });
 
 
@@ -107,17 +111,18 @@ const login = wrapAsync(async (req, res) => {
     .cookie("accessToken", accessToken, options)
     .cookie("refreshToken", refreshToken, options);
 
-  return res.status(200).json(
-    new ApiResponse(
-      200,
-      {
-        accessToken,
-        refreshToken,
-        user: loggedInUser
-      },
-      "User logged in successfully"
-    )
-  );
+ return res.status(200).json(
+  new ApiResponse(
+    200,
+    {
+      accessToken,
+      refreshToken,
+      user: loggedInUser,
+      isEmailVerified: user.isEmailVerified, // ✅ Add this line
+    },
+    "User logged in successfully"
+  )
+);
 });
 
 const logoutUser = wrapAsync(async(req, res)=>{
@@ -171,7 +176,7 @@ const verifyEmail = wrapAsync(async (req, res) => {
   });
 
   if (!user) {
-    throw new ApiError(400, "Token is invalid or expired");
+    throw new ExpressError(400, "Token is invalid or expired");
   }
 
   user.emailVerificationToken = undefined;

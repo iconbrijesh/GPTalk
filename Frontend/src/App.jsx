@@ -1,16 +1,20 @@
-// src/App.jsx
 import { useState, useEffect } from 'react';
-import { Routes, Route } from 'react-router-dom'; // ✅ FIXED: import Routes & Route
+import { Routes, Route, useNavigate } from 'react-router-dom';
 import { v4 as uuidv4 } from 'uuid';
 import { MyContext } from './MyContext.jsx';
 import { Login, Signup, Home } from './pages';
-import Sidebar from './Sidebar.jsx'; // ✅ Ensure Sidebar is imported
-import ChatWindow from './ChatWindow.jsx'; // ✅ Ensure ChatWindow is imported
-import Chat from './Chat.jsx'; // ✅ Adjust path if needed
+import Sidebar from './Sidebar.jsx';
+import ChatWindow from './ChatWindow.jsx';
+import Chat from './Chat.jsx';
+import VerifyEmail from './pages/VerifyEmail';
+import VerifyEmailPending from './pages/VerifyEmailPending'; // ✅ Added
+
 import './App.css';
 
 function App() {
-  const [authToken, setAuthToken] = useState(localStorage.getItem('token') || null);
+  const navigate = useNavigate();
+
+  const [authToken, setAuthToken] = useState(localStorage.getItem('accessToken') || null); // ✅ Fixed key
   const [prompt, setPrompt] = useState('');
   const [reply, setReply] = useState(null);
   const [currThreadId, setCurrThreadId] = useState(uuidv4());
@@ -22,36 +26,33 @@ function App() {
     profile: false,
   });
 
-  // useEffect(() => {
-  //   fetch(`${process.env.REACT_APP_API_URL}/signup`, {
-  //     method: 'GET',
-  //     credentials: 'include',
-  //   })
-  //     .then((res) => res.text())
-  //     .then((data) => console.log(data));
-  // }, []);
-
   useEffect(() => {
-  const token = localStorage.getItem("token");
-  if (!token) return;
+    const token = localStorage.getItem("accessToken");
+    if (!token) return;
 
-  fetch(`${import.meta.env.VITE_API_URL}/current-user`, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-      Authorization: `Bearer ${token}`,
-    },
-    credentials: "include",
-  })
-    .then((res) => res.json())
-    .then((data) => {
-      console.log("Authenticated user:", data);
-      // optionally set user state here
+    fetch(`${import.meta.env.VITE_API_URL}/api/auth/current-user`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+      credentials: "include",
     })
-    .catch((err) => {
-      console.error("Auth check failed:", err);
-    });
-}, []);
+      .then((res) => res.json())
+      .then((data) => {
+        if (data?.user?.isEmailVerified) {
+          console.log("Authenticated user:", data);
+        } else {
+          console.warn("User not verified yet");
+          navigate("/verify-email-pending"); // ✅ Redirect unverified users
+        }
+      })
+      .catch((err) => {
+        console.error("Auth check failed:", err);
+        localStorage.removeItem("accessToken"); // ✅ Clear expired token
+        navigate("/login"); // ✅ Redirect to login
+      });
+  }, []);
 
   const providerValues = {
     authToken,
@@ -79,7 +80,8 @@ function App() {
           <Route path="/" element={<Home />} />
           <Route path="/login" element={<Login />} />
           <Route path="/signup" element={<Signup />} />
-
+          <Route path="/verify-email" element={<VerifyEmail />} />
+          <Route path="/verify-email-pending" element={<VerifyEmailPending />} /> {/* ✅ Added */}
           <Route path="/chat" element={
             <div className="chat-layout">
               <Sidebar />

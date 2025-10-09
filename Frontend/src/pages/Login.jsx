@@ -28,14 +28,29 @@ const Login = () => {
       const success = data?.success;
       const message = data?.message;
       const accessToken = data?.data?.accessToken;
+      const isEmailVerified = data?.data?.isEmailVerified;
 
       if (success && accessToken) {
-        toast.success(message || "Login successful", { position: "bottom-left" });
+        if (!isEmailVerified) {
+          toast.warn("Please verify your email before logging in.", {
+            position: "bottom-left",
+          });
+          navigate("/verify-email-pending", {
+            state: { email: inputValue.email },
+          });
+          return;
+        }
+
+        toast.success(message || "Login successful", {
+          position: "bottom-left",
+        });
         setAuthToken(accessToken);
         localStorage.setItem("token", accessToken);
         navigate("/chat");
       } else {
-        toast.error(message || "Login failed", { position: "bottom-left" });
+        toast.error(message || "Login failed", {
+          position: "bottom-left",
+        });
       }
     } catch (error) {
       console.error("Login error:", error);

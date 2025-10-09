@@ -8,3 +8,11 @@ export const loginUser = (email, password) => {
 export const registerUser = (username, email, password) => {
   return axios.post('/register', { username, email, password });
 };
+
+export const verifyEmail = (token) => {
+  return axios.get(`/verify-email/${token}`);
+};
+
+export const resendVerificationEmail = () => {
+  return axios.post('/resend-verification');
+};

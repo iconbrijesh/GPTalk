@@ -1,9 +1,21 @@
-// src/api/axios.js
-import axios from 'axios';
+import axios from "axios";
+import { toast } from "react-toastify";
 
-const instance = axios.create({
-  baseURL: import.meta.env.VITE_API_URL, // ✅ dynamic for dev/prod
-  withCredentials: true,
-});
+// Set base config
+axios.defaults.baseURL = import.meta.env.VITE_API_BASE_URL;
+axios.defaults.withCredentials = true;
 
-export default instance;
+// Add interceptor
+axios.interceptors.response.use(
+  response => response,
+  error => {
+    if (error.response?.status === 401) {
+      localStorage.removeItem("accessToken");
+      toast.error("Session expired. Please log in again.");
+      window.location.href = "/login";
+    }
+    return Promise.reject(error);
+  }
+);
+
+export default axios;

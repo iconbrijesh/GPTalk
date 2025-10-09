@@ -41,7 +41,9 @@ const userSchema = new mongoose.Schema(
     emailVerificationExpiry: {
       type: String,
     },
+  
   },
+
   {
     timestamps: true,
   }

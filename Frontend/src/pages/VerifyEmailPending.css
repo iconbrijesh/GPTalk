@@ -1,0 +1,10 @@
+.verify-email-pending {
+  max-width: 500px;
+  margin: auto;
+  padding: 2rem;
+  text-align: center;
+}
+.status-message {
+  margin-top: 1rem;
+  color: #007bff;
+}
