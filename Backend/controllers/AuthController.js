@@ -47,20 +47,19 @@ const registerUser = wrapAsync(async (req, res) => {
     isEmailVerified: false
   });
 
-  const { unHashedToken, hashedToken, tokenExpiry } = user.generateTemporaryToken();
+ const { unHashedToken, hashedToken, tokenExpiry } = user.generateTemporaryToken();
 
-  user.emailVerificationToken = hashedToken;
-  user.emailVerificationExpiry = tokenExpiry;
-  await user.save({ validateBeforeSave: false });
+user.emailVerificationToken = hashedToken;
+user.emailVerificationExpiry = tokenExpiry;
+await user.save({ validateBeforeSave: false });
 
-  await sendEmail({
-    email: user.email,
-    subject: "Please verify your email",
-    mailgenContent: emailVerificationMailgenContent(
-      user.username,
-      `${req.protocol}://${req.get("host")}/verify-email/${unHashedToken}`
-    )
-  });
+const verificationURL = `${process.env.BACKEND_URL}/api/auth/verify-email/${unHashedToken}`;
+
+await sendEmail({
+  email: user.email,
+  subject: "Please verify your email",
+  mailgenContent: emailVerificationMailgenContent(user.username, verificationURL)
+});
 
   const createdUser = await User.findById(user._id).select(
     "-password -refreshToken -emailVerificationToken -emailVerificationExpiry"
@@ -165,7 +164,7 @@ const verifyEmail = wrapAsync(async (req, res) => {
     throw new ExpressError(400, "Email verification token is missing");
   }
 
-  let hashedToken = crypto
+  const hashedToken = crypto
     .createHash("sha256")
     .update(verificationToken)
     .digest("hex");
@@ -181,19 +180,12 @@ const verifyEmail = wrapAsync(async (req, res) => {
 
   user.emailVerificationToken = undefined;
   user.emailVerificationExpiry = undefined;
-
   user.isEmailVerified = true;
+
   await user.save({ validateBeforeSave: false });
 
-  return res.status(200).json(
-    new ApiResponse(
-      200,
-      {
-        isEmailVerified: true,
-      },
-      "Email is verified",
-    ),
-  );
+  // ✅ Redirect to frontend confirmation page
+ return res.redirect(`${process.env.FRONTEND_URL}/email-verified?email=${user.email}`);
 });
 
 
@@ -208,21 +200,20 @@ const resendEmailVerification = wrapAsync(async (req, res) => {
     throw new ExpressError(409, "Email is already verified");
   }
 
-  const { unHashedToken, hashedToken, tokenExpiry } =
-    user.generateTemporaryToken();
+  const { unHashedToken, hashedToken, tokenExpiry } = user.generateTemporaryToken();
 
   user.emailVerificationToken = hashedToken;
   user.emailVerificationExpiry = tokenExpiry;
 
   await user.save({ validateBeforeSave: false });
 
+  // ✅ Declare verificationURL separately
+  const verificationURL = `${process.env.BACKEND_URL}/verify-email/${unHashedToken}`;
+
   await sendEmail({
-    email: user?.email,
+    email: user.email,
     subject: "Please verify your email",
-    mailgenContent: emailVerificationMailgenContent(
-      user.username,
-      `${req.protocol}://${req.get("host")}/api/v1/users/verify-email/${unHashedToken}`,
-    ),
+    mailgenContent: emailVerificationMailgenContent(user.username, verificationURL),
   });
 
   return res

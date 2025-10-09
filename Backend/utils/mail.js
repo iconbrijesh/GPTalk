@@ -6,7 +6,7 @@ const sendEmail = async (options) => {
     theme: 'default',
     product: {
       name: 'GPTalk',
-      link: 'https://gptalk-6xim.onrender.com'
+      link: 'process.env.FRONTEND_URL'
     }
   });
 

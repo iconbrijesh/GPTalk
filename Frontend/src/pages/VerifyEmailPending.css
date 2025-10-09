@@ -1,10 +1,60 @@
-.verify-email-pending {
-  max-width: 500px;
-  margin: auto;
-  padding: 2rem;
-  text-align: center;
+.verify-page-wrapper {
+  height: 100vh;
+  width: 100vw;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: linear-gradient(to right, #0f2027, #2c5364, #00c6ff); /* override global */
 }
-.status-message {
-  margin-top: 1rem;
-  color: #007bff;
+
+.verify-email-pending {
+  background-color: rgba(255, 255, 255, 0.08);
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 12px;
+  padding: 2rem;
+  max-width: 500px;
+  width: 100%;
+  text-align: center;
+  color: white;
+  box-shadow: 0 0 20px rgba(0, 0, 0, 0.4);
+}
+
+.verify-email-pending h2 {
+  font-size: 1.8rem;
+  margin-bottom: 1rem;
+}
+
+.verify-email-pending p {
+  font-size: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.verify-btn {
+  background-color: #ffffff;
+  color: #2c5364;
+  border: none;
+  padding: 0.75rem 1.5rem;
+  font-size: 1rem;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  margin: 0.5rem;
+}
+
+.verify-btn:hover {
+  background-color: #00c6ff;
+  color: white;
+}
+
+.verify-btn:disabled {
+  background-color: #ccc;
+  color: #666;
+  cursor: not-allowed;
+}
+
+.verify-btn.secondary {
+  background-color: transparent;
+  border: 2px solid white;
+  color: white;
 }

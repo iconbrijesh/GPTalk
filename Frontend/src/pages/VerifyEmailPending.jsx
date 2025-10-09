@@ -1,7 +1,8 @@
-// src/pages/VerifyEmailPending.jsx
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
+import { toast } from "react-toastify"; // ✅ Add toast for feedback
+import './VerifyEmailPending.css'; // ✅ Add styling
 
 function VerifyEmailPending() {
   const [loading, setLoading] = useState(false);
@@ -12,6 +13,7 @@ function VerifyEmailPending() {
     const token = localStorage.getItem("accessToken");
     if (!token) {
       setMessage("You must be logged in to resend verification.");
+      toast.error("Missing access token.");
       return;
     }
 
@@ -28,31 +30,37 @@ function VerifyEmailPending() {
         }
       );
 
-      setMessage(res.data.message || "Verification email resent successfully.");
+      const msg = res.data.message || "Verification email resent successfully.";
+      setMessage(msg);
+      toast.success(msg);
     } catch (err) {
       console.error("Resend failed:", err);
-      setMessage("Failed to resend verification email.");
+      const errorMsg = err.response?.data?.message || "Failed to resend verification email.";
+      setMessage(errorMsg);
+      toast.error(errorMsg);
     } finally {
       setLoading(false);
     }
   };
 
-  return (
+ return (
+  <div className="verify-page-wrapper">
     <div className="verify-email-pending">
       <h2>Please verify your email</h2>
       <p>We've sent a verification link to your inbox. Click it to activate your account.</p>
 
-      <button onClick={handleResend} disabled={loading}>
+      <button className="verify-btn" onClick={handleResend} disabled={loading}>
         {loading ? "Resending..." : "Resend Verification Email"}
       </button>
 
       {message && <p className="status-message">{message}</p>}
 
-      <button onClick={() => navigate("/login")} style={{ marginTop: "1rem" }}>
+      <button className="verify-btn secondary" onClick={() => navigate("/login")}>
         Back to Login
       </button>
     </div>
-  );
+  </div>
+);
 }
 
 export default VerifyEmailPending;
