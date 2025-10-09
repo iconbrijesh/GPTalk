@@ -53,7 +53,7 @@ user.emailVerificationToken = hashedToken;
 user.emailVerificationExpiry = tokenExpiry;
 await user.save({ validateBeforeSave: false });
 
-const verificationURL = `${process.env.BACKEND_URL}/api/auth/verify-email/${unHashedToken}`;
+const verificationURL = `${process.env.BACKEND_URL}/verify-email/${unHashedToken}`;
 
 await sendEmail({
   email: user.email,
