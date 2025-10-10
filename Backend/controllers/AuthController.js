@@ -8,7 +8,7 @@ import crypto from 'crypto'; // ✅ Correct for ESM
 
 import {
   emailVerificationMailgenContent,
-  
+
   sendEmail,
 } from "../utils/mail.js";
 
@@ -47,34 +47,38 @@ const registerUser = wrapAsync(async (req, res) => {
     isEmailVerified: false
   });
 
- const { unHashedToken, hashedToken, tokenExpiry } = user.generateTemporaryToken();
+  const { unHashedToken, hashedToken, tokenExpiry } = user.generateTemporaryToken();
 
-user.emailVerificationToken = hashedToken;
-user.emailVerificationExpiry = tokenExpiry;
-await user.save({ validateBeforeSave: false });
+  user.emailVerificationToken = hashedToken;
+  user.emailVerificationExpiry = tokenExpiry;
+  await user.save({ validateBeforeSave: false });
+  const backendURL = process.env.NODE_ENV === "production"
+    ? process.env.BACKEND_URL
+    : "http://localhost:8080";
 
-const verificationURL = `${process.env.BACKEND_URL}/verify-email/${unHashedToken}`;
+  const verificationURL = `${backendURL}/verify-email/${unHashedToken}`;
+  const verificationURL = `${process.env.BACKEND_URL}/verify-email/${unHashedToken}`;
 
-await sendEmail({
-  email: user.email,
-  subject: "Please verify your email",
-  mailgenContent: emailVerificationMailgenContent(user.username, verificationURL)
-});
+  await sendEmail({
+    email: user.email,
+    subject: "Please verify your email",
+    mailgenContent: emailVerificationMailgenContent(user.username, verificationURL)
+  });
 
   const createdUser = await User.findById(user._id).select(
     "-password -refreshToken -emailVerificationToken -emailVerificationExpiry"
   );
 
   return res.status(201).json(
-  new ApiResponse(
-    201,
-    {
-      user: createdUser,
-      isEmailVerified: false, // ✅ Explicitly include this
-    },
-    "User registered successfully. Please verify your email."
-  )
-);
+    new ApiResponse(
+      201,
+      {
+        user: createdUser,
+        isEmailVerified: false, // ✅ Explicitly include this
+      },
+      "User registered successfully. Please verify your email."
+    )
+  );
 });
 
 
@@ -110,25 +114,25 @@ const login = wrapAsync(async (req, res) => {
     .cookie("accessToken", accessToken, options)
     .cookie("refreshToken", refreshToken, options);
 
- return res.status(200).json(
-  new ApiResponse(
-    200,
-    {
-      accessToken,
-      refreshToken,
-      user: loggedInUser,
-      isEmailVerified: user.isEmailVerified, // ✅ Add this line
-    },
-    "User logged in successfully"
-  )
-);
+  return res.status(200).json(
+    new ApiResponse(
+      200,
+      {
+        accessToken,
+        refreshToken,
+        user: loggedInUser,
+        isEmailVerified: user.isEmailVerified, // ✅ Add this line
+      },
+      "User logged in successfully"
+    )
+  );
 });
 
-const logoutUser = wrapAsync(async(req, res)=>{
+const logoutUser = wrapAsync(async (req, res) => {
   await User.findByIdAndUpdate(
     req.user._id,
     {
-      $set:{
+      $set: {
         refreshToken: "",
       }
     },
@@ -136,18 +140,18 @@ const logoutUser = wrapAsync(async(req, res)=>{
       new: true,
     }
   );
-  const options ={
+  const options = {
     httpOnly: true,
     // secure: true
   }
 
-  return res 
-  .status(200)
-  .clearCookie("accessToken", options)
-  .clearCookie("refreshToken", options)
-  .json(
-    new ApiResponse(200, {}, "User logged out")
-  )
+  return res
+    .status(200)
+    .clearCookie("accessToken", options)
+    .clearCookie("refreshToken", options)
+    .json(
+      new ApiResponse(200, {}, "User logged out")
+    )
 
 });
 
@@ -185,7 +189,7 @@ const verifyEmail = wrapAsync(async (req, res) => {
   await user.save({ validateBeforeSave: false });
 
   // ✅ Redirect to frontend confirmation page
- return res.redirect(`${process.env.FRONTEND_URL}/email-verified?email=${user.email}`);
+  return res.redirect(`${process.env.FRONTEND_URL}/email-verified?email=${user.email}`);
 });
 
 
@@ -362,4 +366,4 @@ const changeCurrentPassword = wrapAsync(async (req, res) => {
 });
 
 
-export { registerUser, login, logoutUser, getCurrentUser,  verifyEmail,resendEmailVerification,refreshAccessToken, forgotPasswordRequest,resetForgotPassword, changeCurrentPassword};
+export { registerUser, login, logoutUser, getCurrentUser, verifyEmail, resendEmailVerification, refreshAccessToken, forgotPasswordRequest, resetForgotPassword, changeCurrentPassword };
