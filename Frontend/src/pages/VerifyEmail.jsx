@@ -5,7 +5,7 @@ import { toast } from 'react-toastify';
 import './VerifyEmail.css'; // optional styling
 
 const VerifyEmail = () => {
-  const { token } = useParams(); // ✅ cleaner than useSearchParams
+  const { token } = useParams();
   const navigate = useNavigate();
 
   const [message, setMessage] = useState('');
@@ -13,6 +13,8 @@ const VerifyEmail = () => {
   const [resending, setResending] = useState(false);
 
   useEffect(() => {
+    console.log("🔍 VerifyEmail mounted with token:", token);
+
     const handleVerify = async () => {
       if (!token) {
         setMessage('❌ Verification token is missing.');
@@ -24,9 +26,9 @@ const VerifyEmail = () => {
       try {
         await verifyEmail(token);
         setMessage('✅ Email verified successfully!');
-        toast.success('Email verified! You can now log in.');
-        localStorage.removeItem('accessToken'); // ✅ cleanup if stored during signup
-        setTimeout(() => navigate('/login'), 8080); // ✅ redirect after toast
+        toast.success('Email verified! Redirecting to login...');
+        localStorage.removeItem('accessToken'); // cleanup
+        setTimeout(() => navigate('/login'), 3000); // smoother UX
       } catch (err) {
         const errorMsg = err.response?.data?.message || '❌ Verification failed.';
         setMessage(errorMsg);
@@ -54,7 +56,7 @@ const VerifyEmail = () => {
   return (
     <div className="verify-container">
       <h2>Email Verification</h2>
-      <p>{loading ? 'Verifying your email...' : message}</p>
+      <p>{loading ? '🔄 Verifying your email...' : message}</p>
 
       {!loading && message.includes('❌') && (
         <button onClick={handleResend} disabled={resending}>
