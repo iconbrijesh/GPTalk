@@ -52,11 +52,8 @@ const registerUser = wrapAsync(async (req, res) => {
   user.emailVerificationToken = hashedToken;
   user.emailVerificationExpiry = tokenExpiry;
   await user.save({ validateBeforeSave: false });
-  const backendURL = process.env.NODE_ENV === "production"
-    ? process.env.BACKEND_URL
-    : "http://localhost:8080";
+  
 
-  const verificationURL = `${backendURL}/verify-email/${unHashedToken}`;
   const verificationURL = `${process.env.BACKEND_URL}/verify-email/${unHashedToken}`;
 
   await sendEmail({
